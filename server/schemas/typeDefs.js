@@ -31,12 +31,21 @@ type Query {
     me(_id: ID!): User
 }
 
-type BookInput
-
-type Mutation {
-
+input BookInput {
+    authors: [String!]
+    description: String!
+    title: String!
+    bookid: String!
+    image: String!
+    link: String!
 }
 
+type Mutation {
+    login(email: String!, password: String! ): Auth
+    addUser(username: String!, email: String!, password: String!): Auth
+    saveBook(_id: ID!, input: BookInput!): User
+    removeBook(bookId: String!): User
+}
 `
 
 module.exports = typeDefs

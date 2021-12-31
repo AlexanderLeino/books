@@ -10,7 +10,6 @@ type Book {
     title: String!
     image: String!
     link: String!
-    title: String!
 }
 
 type User {

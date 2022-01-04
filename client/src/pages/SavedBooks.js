@@ -8,7 +8,7 @@ import { REMOVE_BOOK} from '../utils/mutations'
 
 const SavedBooks = () => {
   const { data: { _id } } = Auth.getProfile()
-  console.log(_id)
+ 
   const { loading, data, refetch } = useQuery(GET_ME, {
     variables: { _id }
   })
@@ -21,13 +21,14 @@ const SavedBooks = () => {
   // create function that accepts the book's mongo _id value as param and deletes the book from the database
   const handleDeleteBook = async (bookId) => {
     const token = Auth.loggedIn() ? Auth.getToken() : null;
-
+    console.log(bookId)
     if (!token) {
       return false;
     }
 
 
     try {
+      
       const response = await remove_book({
         variables: {
           _id,
@@ -68,7 +69,9 @@ const SavedBooks = () => {
                       <Card.Title>{book.title}</Card.Title>
                       <p className='small'>Authors: {book.authors}</p>
                       <Card.Text>{book.description}</Card.Text>
-                      <Button className='btn-block btn-danger' onClick={() => handleDeleteBook(book.bookId)}>
+                      <Button className='btn-block btn-danger' onClick={(event) => {handleDeleteBook(book._id)
+                      event.preventDefault()
+                      } }>
                         Delete this Book!
                       </Button>
                     </Card.Body>

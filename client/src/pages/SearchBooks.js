@@ -64,7 +64,9 @@ const SearchBooks = () => {
 
     // get token
     const token = Auth.loggedIn() ? Auth.getToken() : null;
-    console.log(token)
+    const { data: { _id } } = Auth.getProfile()
+    console.log(_id)
+    
  
    
     if (!token) {
@@ -74,7 +76,7 @@ const SearchBooks = () => {
     try {
       const response = await save_book({
         variables: {
-          _id: "hello",
+          _id: _id,
           book: bookToSave
         }
       })

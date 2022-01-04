@@ -32,7 +32,6 @@ const SignupForm = () => {
     }
 
     try {
-
         const token = await add_user({
           variables: userFormData
         })

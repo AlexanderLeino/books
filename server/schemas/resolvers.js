@@ -34,7 +34,7 @@ const resolvers = {
             }
         },
         saveBook: async (parents, {_id, book}) => {
-            const updatedUser = User.findById(_id,
+            const updatedUser = User.findByIdAndUpdate(_id,
                 {
                     $push: {
                         savedBooks: book
@@ -42,16 +42,13 @@ const resolvers = {
                 })
                 return updatedUser
         },
-        removeBook: async (parents, {_id, bookId}) => {
-            const updatedUser = User.findById(_id, 
-                {
-                    $pull: {
-                        savedBooks: bookId
-                    }
-                })
-                return updatedUser
+        removeBook: async (parent, { _id, bookId }) => {
+            const updatedUser = await User.findByIdAndUpdate(
+                _id,
+                { $pull: { savedBooks: { bookId } } }
+            )
+            return updatedUser
         }
-        
     }
 }
 

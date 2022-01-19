@@ -5,6 +5,7 @@ export const GET_ME = gql`
         me(_id: $_id){
             username
             savedBooks {
+                _id
                 title
                 description
                 image

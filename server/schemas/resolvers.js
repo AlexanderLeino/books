@@ -1,48 +1,43 @@
-const { AuthenticationError } = require('apollo-server-core')
-const { User } = require('../models')
+const { AuthenticationError } = require('apollo-server-express');
+const { User } = require('../models');
 
-const { signToken } = require('../utils/auth') 
+const { signToken } = require('../utils/auth')
 
 const resolvers = {
     Query: {
-        me: async (parent, {_id}) => {
-            return await User.findById({_id})
+        me: async (parent, { _id }) => {
+            return await User.findById(_id)
         }
     },
-
     Mutation: {
-        addUser: async (parent, {username, email, password}) => {
-            const user = User.create({username, email, password})
+        createUser: async (parent, args) => {
+            const user = await User.create(args)
             const token = signToken(user)
-            
             return { token, user }
         },
-        login: async (parents, {email, password}) => {
+        login: async (parent, { email, password }) => {
             const user = await User.findOne({ email })
 
-            if(!user){ 
-                throw new AuthenticationError('No profile with this email found!')
-            } else {
-                
-                const passwordInput = await user.isCorrectPassword(password)
-                if (!passwordInput){
-                    throw new AuthenticationError('Incorrect Password!')
-                } else {
-                    const token = signToken(user)
-                    return {token, user}
-                }
+            if (!user) {
+                throw new AuthenticationError('No Profile with that email')
             }
+
+            const correctPw = await user.isCorrectPassword(password)
+
+            if (!correctPw) {
+                throw new AuthenticationError('Incorrect password!');
+            }
+            const token = signToken(user)
+            return { token, user }
         },
-        saveBook: async (parents, {_id, book}) => {
-            const updatedUser = User.findByIdAndUpdate(_id,
-                {
-                    $push: {
-                        savedBooks: book
-                    }
-                })
-                return updatedUser
+        saveBook: async (parent, { _id, book }) => {
+            const updatedUser = await User.findByIdAndUpdate(
+                _id,
+                { $push: { savedBooks: book } }
+            )
+            return updatedUser
         },
-        removeBook: async (parent, { _id, bookId }) => {
+        deleteBook: async (parent, { _id, bookId }) => {
             const updatedUser = await User.findByIdAndUpdate(
                 _id,
                 { $pull: { savedBooks: { bookId } } }

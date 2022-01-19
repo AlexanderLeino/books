@@ -1,21 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Jumbotron, Container, CardColumns, Card, Button } from 'react-bootstrap';
+import { GET_ME } from '../utils/queries';
+import { DELETE_BOOK } from '../utils/mutations';
 import Auth from '../utils/auth';
 import { removeBookId } from '../utils/localStorage';
-import { useQuery, useMutation } from '@apollo/client'
-import { GET_ME } from '../utils/queries'
-import { REMOVE_BOOK} from '../utils/mutations'
+import { useQuery, useMutation } from '@apollo/client';
 
 const SavedBooks = () => {
   const { data: { _id } } = Auth.getProfile()
-  console.log(_id)
   const { loading, data, refetch } = useQuery(GET_ME, {
     variables: { _id }
   })
   refetch()
-  const [remove_book] = useMutation(REMOVE_BOOK)
+  const [deleteBook] = useMutation(DELETE_BOOK)
   let userData = data?.me || {}
-  console.log(userData)
 
 
   // create function that accepts the book's mongo _id value as param and deletes the book from the database
@@ -28,7 +26,7 @@ const SavedBooks = () => {
 
 
     try {
-      const response = await remove_book({
+      const response = await deleteBook({
         variables: {
           _id,
           bookId
